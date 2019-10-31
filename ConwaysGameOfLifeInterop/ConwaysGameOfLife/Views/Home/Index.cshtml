@@ -1,0 +1,139 @@
+﻿<h2 style="text-align: center"><label>Conway's Game of Life</label></h2>
+
+<table id="field" align="center" border="1">
+    @for(int row = 0; row < 30; row++)
+    {
+        <tr >
+            @for (int col = 0; col < 30; col++)
+            {
+                var id = row.ToString() + "," + col.ToString();
+                <td id="@id" width="10px" height="10px" onclick="pushCell(this)"></td>
+            }
+        </tr>
+    }
+</table>
+<br />
+<table align="center">
+    <tr>
+        <td width="100px" align="center"><button id="runBtn">Pause</button></td>
+        <td width="100px" align="center"><button id="clearBtn">Clear</button></td>
+        <td width="100px" align="center"><button id="randBtn">Random</button></td>
+    </tr>
+</table>
+
+<script>
+    var worldSize = 30;
+    var position = [];
+    for (let i = 0; i < worldSize; i++) {
+        position.push(0);
+    }
+
+    var state = "Run";
+    var runBtn = document.getElementById("runBtn");
+    var clearBtn = document.getElementById("clearBtn");
+    var randBtn = document.getElementById("randBtn");
+
+    function pushCell(cell) {
+        let coords = cell.id.split(',');
+        let row = coords[0];
+        let col = coords[1];
+        let value = position[row] & 1 << col;
+
+        if (value) {
+            position[row] &= !(1 << col);
+            cell.bgColor = '#fff';
+        } else {
+            position[row] |= 1 << col;
+            cell.bgColor = '#000';
+        }
+    }
+
+    function getRandomData() {        
+        $.ajax({
+            type: "post",
+            url: "/Home/GetRandomData",
+            success: function (response) {
+                populateWorld(response);
+            }
+        });
+    }
+    
+    function sendData() {
+        if (state != "Run") {
+            return;
+        }
+        $.ajax({
+            type: "post",
+            url: "/Home/NextStep",
+            data: $.extend({}, position),
+            success: function (response) {
+                if (state != "Run") {
+                    return;
+                }                
+                populateWorld(response);
+               
+                if (state == "Run") {
+                    setTimeout(sendData, 300);
+                }
+            }
+        });
+    }
+
+    function clearWorld() {
+        for (let i = 0; i < position.length; i++) {
+            position[i] = 0;
+        }
+
+        for (let row = 0; row < worldSize; row++) {
+            for (let col = 0; col < worldSize; col++) {
+                var name = row.toString() + "," + col.toString();
+                let cell = document.getElementById(name);
+                cell.bgColor = '#fff';
+            }
+        }
+    }
+
+    function populateWorld(data) {
+        if (Array.from(data).every((element, i) => element == position[i])) {
+            state = "Pause";
+            runBtn.innerHTML = "Run";
+            alert("END");
+        }
+
+        clearWorld();
+
+        for (let row = 0; row < worldSize; row++) {
+            for (let col = 0; col < worldSize; col++) {
+                if ((data[row] & 1 << col) != 0) {
+                    position[row] |= 1 << col;
+                    var name = row.toString() + "," + col.toString();
+                    let cell = document.getElementById(name);
+                    cell.bgColor = '#000';
+                }
+            }
+        }
+    }
+
+    runBtn.onclick = function () {
+        state = runBtn.innerHTML;
+        runBtn.innerHTML = runBtn.innerHTML == "Run" ? "Pause" : "Run";
+        if (state == "Run") {
+            sendData();
+        }
+    }
+
+    clearBtn.onclick = function () {
+        state = "Pause";
+        runBtn.innerHTML = "Run";
+        clearWorld();        
+    }
+
+    randBtn.onclick = function () {
+        state = "Pause";
+        runBtn.innerHTML = "Run";
+        getRandomData();
+    }
+    
+    getRandomData();
+    setTimeout(sendData, 300);
+</script>

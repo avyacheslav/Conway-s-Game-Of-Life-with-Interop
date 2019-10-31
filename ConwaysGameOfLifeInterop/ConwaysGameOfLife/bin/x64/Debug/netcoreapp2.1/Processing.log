@@ -1,0 +1,7 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(376,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  Processing.cpp
+c1xx : warning C4199: two-phase name lookup is not supported for C++/CLI, C++/CX, or OpenMP; use /Zc:twoPhase-
+  Processing.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
+     Creating library ..\ConwaysGameOfLife\bin\x64\Debug\netcoreapp2.1\Processing.lib and object ..\ConwaysGameOfLife\bin\x64\Debug\netcoreapp2.1\Processing.exp
+  Processing.vcxproj -> E:\тестовые задачи\C# задачи\ConwaysGameOfLifeInterop\Processing\..\ConwaysGameOfLife\bin\x64\Debug\netcoreapp2.1\Processing.dll
